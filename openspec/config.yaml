@@ -1,0 +1,38 @@
+schema: sdd-full
+
+context: |
+  Project: jpf-symbc (Symbolic Java PathFinder)
+  Type: JPF extension for symbolic execution of Java bytecode
+  Language: Java 8 (migration target: Java 11)
+  Build system: Apache Ant (migration target: Maven multi-module)
+  Repository: fork with full write access
+  Academic context: Symbolic execution research tool from NASA JPF ecosystem
+
+  CRITICAL RULE — Existing system (brownfield):
+  Specs document the CURRENT behavior of the system.
+  Future changes use the OpenSpec workflow (proposal -> specs -> design -> tasks).
+  Do not create aspirational specs — only what is implemented.
+
+  Spec Domains (migration-impacted areas only):
+  - build: Build system (Ant, source roots, JARs, compilation targets)
+  - dependencies: jpf-core fork, 28 solver JARs, native libraries, classpath resolution
+  - configuration: .jpf property files, jpf.properties, site.properties, path conventions
+
+  Schemas:
+  - sdd-full: Full SDD workflow (proposal -> specs -> design -> tasks). Default.
+
+references:
+  docs:
+    - CLAUDE.md
+    - docs/PRD.md
+
+rules:
+  specs:
+    - "Specs document the CURRENT behavior of the system"
+    - "Use RFC 2119 keywords (MUST, MUST NOT, SHALL, SHOULD, MAY) for requirements"
+    - "Write scenarios in WHEN/THEN/AND format"
+    - "Invariant IDs use format INV-XX-NN where XX is domain abbreviation (BLD, DEP, CFG)"
+  tasks:
+    - Include a final Verification group
+    - Annotate skill invocations as checkbox items where they add value
+    - In sdd-full changes, use component skills directly (not orchestrators)

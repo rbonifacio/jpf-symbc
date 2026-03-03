@@ -1,0 +1,9 @@
+sdd:
+  project:
+    name: "jpf-symbc"
+    language: "java"
+    build_system: "ant"
+  infrastructure:
+    mode: "full"
+  plugins:
+    path: ".claude/skills/sdd-*/"
