@@ -1,0 +1,11 @@
+target = uberlazy.TestALOAD
+
+classpath = ${jpf-symbc}/jpf-symbc-examples/target/classes
+
+sourcepath = ${jpf-symbc}/jpf-symbc-examples/src/main/java 
+
+symbolic.lazy = true
+
+type_classpath = ${jpf-symbc}/jpf-symbc-examples/target/classes/uberlazy
+
+symbolic.method = uberlazy.TestALOAD.run(sym)

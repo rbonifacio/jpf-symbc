@@ -1,0 +1,9 @@
+target=SimpleStringTest
+classpath=${jpf-symbc}/jpf-symbc-examples/target/classes
+sourcepath=${jpf-symbc}/jpf-symbc-examples/src/main/java
+
+symbolic.dp=z3
+
+#listener = .symbc.SymbolicListener
+#listener = .listener.ChoiceTracker
+#listener = gov.nasa.jpf.symbc.sequences.SymbolicSequenceListener

@@ -1,0 +1,8 @@
+target = arrays.Arrays
+
+symbolic.method=arrays.Arrays.check_length(sym#sym)
+symbolic.lazy=on
+symbolic.arrays=true
+classpath=${jpf-symbc}/jpf-symbc-examples/target/classes
+search.multiple_errors=true
+symbolic.dp = z3

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>gov.nasa</groupId>
+        <artifactId>jpf-symbc-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>jpf-symbc-main</artifactId>
+    <name>JPF-SymBC Main</name>
+    <description>Core symbolic execution engine for JPF-SymBC (main + peers)</description>
+
+    <dependencies>
+        <!-- Internal module -->
+        <dependency>
+            <groupId>gov.nasa</groupId>
+            <artifactId>jpf-symbc-annotations</artifactId>
+        </dependency>
+
+        <!-- jpf-core -->
+        <dependency>
+            <groupId>gov.nasa</groupId>
+            <artifactId>jpf-core</artifactId>
+        </dependency>
+
+        <!-- ======================================== -->
+        <!-- Maven Central dependencies (all optional) -->
+        <!-- ======================================== -->
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>commons-math</groupId>
+            <artifactId>commons-math</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.bcel</groupId>
+            <artifactId>bcel</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>dk.brics.automaton</groupId>
+            <artifactId>automaton</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>jaxen</groupId>
+            <artifactId>jaxen</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.martiansoftware</groupId>
+            <artifactId>jsap</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.aima-java</groupId>
+            <artifactId>aima-core</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- ======================================== -->
+        <!-- Local repo solver JARs (all optional)    -->
+        <!-- ======================================== -->
+        <dependency>
+            <groupId>com.ufpe</groupId>
+            <artifactId>coral</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>za.ac.sun</groupId>
+            <artifactId>green</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>edu.stanford</groupId>
+            <artifactId>hampi</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.iastate</groupId>
+            <artifactId>iasolver</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- libcvc3 v2.3.0 — NOT managed in parent (parent manages 5.0.0), so version is explicit -->
+        <dependency>
+            <groupId>edu.nyu</groupId>
+            <artifactId>libcvc3</artifactId>
+            <version>2.3.0</version>
+            <optional>true</optional>
+        </dependency>
+        <!-- libcvc3 v5.0.0 -->
+        <dependency>
+            <groupId>edu.nyu</groupId>
+            <artifactId>libcvc3</artifactId>
+            <version>5.0.0</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft</groupId>
+            <artifactId>z3</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>choco</groupId>
+            <artifactId>choco</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>choco</groupId>
+            <artifactId>choco-solver</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.opt4j</groupId>
+            <artifactId>opt4j</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>att.research</groupId>
+            <artifactId>grappa</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.sat4j</groupId>
+            <artifactId>org.sat4j.core</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.sat4j</groupId>
+            <artifactId>org.sat4j.pb</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucsb</groupId>
+            <artifactId>scale</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucsb</groupId>
+            <artifactId>solver</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucsb</groupId>
+            <artifactId>string</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucsb</groupId>
+            <artifactId>proteus</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucsb</groupId>
+            <artifactId>statemachines</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.stp</groupId>
+            <artifactId>stpjni</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>edu.sri</groupId>
+            <artifactId>yicesapijava</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+</project>

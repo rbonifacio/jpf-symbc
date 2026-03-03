@@ -1,0 +1,6 @@
+target=gov.nasa.jpf.symbc.ExSymExe
+classpath=${jpf-symbc}/jpf-symbc-tests/target/test-classes
+sourcepath=${jpf-symbc}/jpf-symbc-tests/src/test/java
+listener = gov.nasa.jpf.symbc.SymbolicListener
+symbolic.method=gov.nasa.jpf.symbc.ExSymExe.test(sym#sym)
+search.multiple_errors=true 

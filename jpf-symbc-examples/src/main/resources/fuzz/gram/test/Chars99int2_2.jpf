@@ -1,0 +1,5 @@
+target=fuzz.gram.test.Chars99int2_2
+classpath=${jpf-symbc}/jpf-symbc-examples/target/classes
+sourcepath=${jpf-symbc}/jpf-symbc-examples/src/main/java
+
+symbolic.dp=z3bitvector

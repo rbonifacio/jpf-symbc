@@ -1,0 +1,10 @@
+gov/
+gov/nasa/
+gov/nasa/jpf/
+gov/nasa/jpf/symbc/
+gov/nasa/jpf/symbc/Concrete.class
+gov/nasa/jpf/symbc/Partition.class
+gov/nasa/jpf/symbc/Preconditions.class
+gov/nasa/jpf/symbc/Symbolic.class
+META-INF/
+META-INF/MANIFEST.MF

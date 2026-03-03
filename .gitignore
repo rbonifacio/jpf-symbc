@@ -1,13 +1,25 @@
+# Maven build output (covers all 5 modules)
+target/
+
+# Backup directory (migration artifacts)
+backup/
+
+# IDE files
 .hg
 .hgignore
 local.properties
 .version
 nbproject/private/*
-build/*
-dist/*
-tmp/*
-trace
 *.class
 *.orig
 *~
 *.DS_Store
+
+# Old Ant build output
+build/*
+dist/*
+tmp/*
+trace
+
+# NOTE: repo/ is NOT gitignored — it contains 20 local solver JARs
+# that must be version-controlled (not available on Maven Central)

@@ -1,0 +1,13 @@
+target = uberlazy.TestDriver01
+
+classpath = ${jpf-symbc}/jpf-symbc-examples/target/classes
+
+sourcepath = ${jpf-symbc}/jpf-symbc-examples/src/main/java 
+
+symbolic.lazy = true
+
+symbolic.lazy.subtypes = true
+
+type_classpath = ${jpf-symbc}/jpf-symbc-examples/target/classes/uberlazy
+
+symbolic.method = uberlazy.TestDriver01.run()

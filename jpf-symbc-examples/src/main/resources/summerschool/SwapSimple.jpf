@@ -1,0 +1,17 @@
+target=summerschool.SwapSimple
+
+classpath=${jpf-symbc}/jpf-symbc-examples/target/classes
+sourcepath=${jpf-symbc}/jpf-symbc-examples/src/main/java
+
+symbolic.method = summerschool.SwapSimple.test(sym#sym)
+
+#symbolic.debug=true
+
+
+
+symbolic.min_int=-100
+symbolic.max_int=100
+
+symbolic.min_double=-100.0
+symbolic.max_double=100.0
+

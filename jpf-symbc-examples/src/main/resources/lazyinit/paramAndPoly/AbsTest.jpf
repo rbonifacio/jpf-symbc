@@ -1,0 +1,12 @@
+target = lazyinit.paramAndPoly.AbsTest
+
+classpath = ${jpf-symbc}/jpf-symbc-examples/target/classes
+
+sourcepath = ${jpf-symbc}/jpf-symbc-examples/src/main/java 
+
+symbolic.lazy = true
+
+symbolic.method=lazyinit.paramAndPoly.AbsTest.test(sym)
+symbolic.lazy=true
+//listener = gov.nasa.jpf.symbc.heap.HeapSymbolicListener
+search.multiple_errors=true

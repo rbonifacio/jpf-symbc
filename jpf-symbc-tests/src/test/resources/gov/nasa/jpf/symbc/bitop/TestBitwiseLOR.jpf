@@ -1,0 +1,9 @@
+target=gov.nasa.jpf.symbc.bitop.TestBitwiseLOR
+
+classpath=${jpf-symbc}/jpf-symbc-tests/target/test-classes
+
+sourcepath=${jpf-symbc}/jpf-symbc-tests/src/test/java
+
+symbolic.method= gov.nasa.jpf.symbc.bitop.TestBitwiseLOR.test(sym#sym)
+
+symbolic.dp = cvc3bitvec

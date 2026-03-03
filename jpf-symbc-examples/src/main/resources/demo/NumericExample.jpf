@@ -1,0 +1,9 @@
+target=demo.NumericExample
+classpath=${jpf-symbc}/jpf-symbc-examples/target/classes
+sourcepath=${jpf-symbc}/jpf-symbc-examples/src/main/java
+symbolic.method = demo.NumericExample.test(sym#sym)
+
+symbolic.dp=coral
+listener = .symbc.SymbolicListener
+
+search.multiple_errors=true

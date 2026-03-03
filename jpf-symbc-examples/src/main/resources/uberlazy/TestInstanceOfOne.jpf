@@ -1,0 +1,11 @@
+target = uberlazy.TestInstanceOfOne
+
+classpath = ${jpf-symbc}/jpf-symbc-examples/target/classes
+
+sourcepath = ${jpf-symbc}/jpf-symbc-examples/src/main/java 
+
+type_classpath = ${jpf-symbc}/jpf-symbc-examples/target/classes/uberlazy
+
+vm.insn_factory.class=gov.nasa.jpf.symbc.uberlazy.UberLazyInstructionFactory
+
+symbolic.method = uberlazy.TestInstanceOfOne.run()

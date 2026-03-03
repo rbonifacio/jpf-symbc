@@ -1,0 +1,14 @@
+target = abstractClasses.Test
+
+classpath = ${jpf-symbc}/jpf-symbc-examples/target/classes
+
+sourcepath = ${jpf-symbc}/jpf-symbc-examples/src/main/java 
+
+symbolic.lazy = true 
+
+type_classpath = ${jpf-symbc}/jpf-symbc-examples/target/classes/abstractClasses
+#symbolic.lazy.subtypes = true
+
+symbolic.method = abstractClasses.Test.foo(sym)
+symbolic.debug=true
+vm.storage.class=nil

@@ -2,14 +2,14 @@
 
 ## Organization
 
-Specs are organized by 3 domains covering the areas impacted by the planned migration (Ant/Java 8 → Maven/Java 11). These document the **current implemented behavior** of the system — not aspirational or post-migration state.
+Specs are organized by 3 domains covering the areas impacted by the migration (Maven multi-module, Java 11). These document the **post-migration behavior** of the system after applying the `gh1-migration-maven-java11` change.
 
 | Domain | Scope | Invariants | Scenarios | Spec |
 |--------|-------|------------|-----------|------|
-| **build** | Build system, source roots, JARs, compilation targets | 8 | 5 | [build/spec.md](build/spec.md) |
-| **dependencies** | jpf-core, 28 solver JARs, native libraries | 7 | 4 | [dependencies/spec.md](dependencies/spec.md) |
-| **configuration** | .jpf files, jpf.properties, site.properties | 9 | 5 | [configuration/spec.md](configuration/spec.md) |
-| **Total** | | **24** | **14** | |
+| **build** | Maven modules, compilation order, JARs, --patch-module | 10 | 6 | [build/spec.md](build/spec.md) |
+| **dependencies** | jpf-core (official), Maven Central + local repo, native libraries | 12 | 11 | [dependencies/spec.md](dependencies/spec.md) |
+| **configuration** | .jpf files, jpf.properties, site.properties, Maven paths | 12 | 6 | [configuration/spec.md](configuration/spec.md) |
+| **Total** | | **34** | **23** | |
 
 Domains NOT impacted by the migration (symbolic execution engine, bytecode instructions, constraint solving logic) are not spec'd — that functionality is preserved unchanged.
 
@@ -33,8 +33,8 @@ Each spec follows four sections:
 
 ## Brownfield Rule
 
-These specs document the **current implemented behavior** of the system.
-They are NOT aspirational — they describe what exists today.
+These specs document the **target behavior** after the `gh1-migration-maven-java11` change.
+They were synced from delta specs after the migration artifacts were finalized.
 
 Future changes follow the OpenSpec workflow:
 1. Create a change proposal in `openspec/changes/`

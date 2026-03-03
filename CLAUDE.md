@@ -2,52 +2,74 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Migration Rules (MANDATORY)
+
+During system evolution, ALL changes MUST be applied directly to the codebase:
+- **No compatibility adapters**: Do not create adapters, shims, or wrappers to maintain backward compatibility with legacy code. Modify the code directly.
+- **No legacy retention**: Old/deprecated code must be removed or overwritten, never kept alongside new code.
+- **Backup before removal**: Before deleting original source files, move them to a `backup/` directory at project root for reference. This is a safety measure, not a compatibility mechanism.
+- **Direct modification**: When APIs change, update all call sites directly. When structures change, refactor all references. No intermediate layers.
+
 ## Project Overview
 
 JPF-SymBC (Symbolic Java PathFinder) is a JPF extension that provides symbolic execution for Java bytecode. It performs non-standard interpretation of bytecodes, enabling symbolic execution on methods with basic type arguments (int, long, double, boolean), symbolic strings, arrays, and user-defined data structures. It also supports a "symcrete" mode that combines concrete and symbolic execution.
 
-**Requires Java 8 specifically — does not work with newer Java versions.**
+**Requires Java 11** (tested with OpenJDK 11.0.12).
 
 ## Build Commands
 
-Build tool is **Apache Ant**. The `jpf-core` dependency must be available as a peer directory (`../jpf-core`) or configured in `~/.jpf/site.properties`.
+Build tool is **Apache Maven** (multi-module). The `jpf-core` dependency must be built and installed to your local Maven repository, and configured in `~/.jpf/site.properties`.
 
 ```bash
-ant compile    # Compile all sources
-ant build      # Compile + generate JAR files (default target)
-ant clean      # Remove build artifacts
-ant test       # Run regression tests (requires JUNIT_HOME env var set)
+mvn compile       # Compile all 5 modules
+mvn test          # Run regression tests (20 tests, JUnit 4)
+mvn package       # Compile + test + generate JAR files
+mvn install       # Install to local Maven repository
+mvn clean compile # Clean build
 ```
 
-Tests use JUnit 4, forked per test with 1024MB max memory. Many test classes are excluded from the automated `ant test` run (see exclusions in `build.xml`).
+Tests use JUnit 4, forked per test with 1024MB max memory. Only `**/Test*.java` files are included. Excluded tests (matching original Ant build.xml exclusions):
+- `TestBitwise*`, `TestCoverage`, `TestDIV`, `TestExJPF` — solver/environment-specific failures
+- `TestLazy*` — lazy initialization tests (environment-dependent)
+- `TestPathCondition`, `TestStringBuilder` — known instabilities
+- `strings/**` — string solver tests (require specific solver setup)
+- `TestSymbolicListener`, `TestSymbolicOutput`, `TestSymbolicJPF` — integration tests with external dependencies
+- `JPF_*` — native peer classes (not tests)
+- `Test*$*` — inner test classes (not standalone tests)
 
 ## Setup Requirements
 
-Create `~/.jpf/site.properties`:
+1. Build and install official jpf-core:
+```bash
+git clone https://github.com/javapathfinder/jpf-core.git /tmp/jpf-core-official
+cd /tmp/jpf-core-official && ./gradlew publishToMavenLocal
+```
+
+2. Create `~/.jpf/site.properties`:
 ```properties
-jpf-core = /path/to/jpf-core
+jpf-core = /path/to/jpf-core-official
 jpf-symbc = /path/to/jpf-symbc
 extensions=${jpf-core},${jpf-symbc}
 ```
 
-The required jpf-core fork: https://github.com/yannicnoller/jpf-core/tree/0f2f2901cd0ae9833145c38fee57be03da90a64f
-
-## Source Layout
+## Source Layout (Maven Multi-Module)
 
 ```
-src/main/         → Main implementation (JVM-level code)
-src/classes/      → Model classes executed inside JPF (e.g., java.lang.* stubs)
-src/annotations/  → Annotations usable by non-JPF apps
-src/peers/        → Native peer implementations
-src/tests/        → JUnit test suite
-src/examples/     → Example programs with .jpf config files
-lib/              → External solver JARs and native libraries
+jpf-symbc-annotations/  → Annotations usable by non-JPF apps
+jpf-symbc-main/          → Main implementation (symbolic bytecodes, listeners, solvers, peers)
+jpf-symbc-classes/       → Model classes executed inside JPF (java.lang.*, java.awt.* stubs)
+  src/main/java/           → Regular model classes (gov.nasa.*, org.*)
+  src/main/modules/        → JDK patch classes (java.base/, java.desktop/)
+jpf-symbc-tests/         → JUnit regression test suite
+jpf-symbc-examples/      → Example programs with .jpf config files
+lib/                     → Native solver libraries (.so, .dll, .dylib)
+repo/                    → Local Maven repository (20 solver JARs not on Maven Central)
 ```
 
-Build outputs go to `build/` with separate dirs for each source set, plus JAR files:
-- `build/jpf-symbc.jar` — main JVM code
-- `build/jpf-symbc-classes.jar` — JPF model classes + annotations
-- `build/jpf-symbc-annotations.jar` — annotations only
+Build outputs go to `*/target/` directories:
+- `jpf-symbc-main/target/classes` — main JVM code (JAR via `mvn package`)
+- `jpf-symbc-classes/target/classes` — JPF model classes
+- `jpf-symbc-annotations/target/classes` — annotations only
 
 ## Architecture
 
@@ -55,9 +77,9 @@ Build outputs go to `build/` with separate dirs for each source set, plus JAR fi
 
 JPF-SymBC plugs into JPF core via two main mechanisms:
 
-1. **`SymbolicInstructionFactory`** (`src/main/gov/nasa/jpf/symbc/SymbolicInstructionFactory.java`) — Replaces standard JVM bytecode instructions with symbolic versions. Uses a `ClassInfoFilter` to selectively apply symbolic instructions only to target classes. Each bytecode (IADD, ISUB, IF_ICMPGE, etc.) has a symbolic counterpart in `gov.nasa.jpf.symbc.bytecode`.
+1. **`SymbolicInstructionFactory`** (`jpf-symbc-main/src/main/java/gov/nasa/jpf/symbc/SymbolicInstructionFactory.java`) — Replaces standard JVM bytecode instructions with symbolic versions. Uses a `ClassInfoFilter` to selectively apply symbolic instructions only to target classes. Each bytecode (IADD, ISUB, IF_ICMPGE, etc.) has a symbolic counterpart in `gov.nasa.jpf.symbc.bytecode`.
 
-2. **`SymbolicListener`** (`src/main/gov/nasa/jpf/symbc/SymbolicListener.java`) — Event listener extending `PropertyListenerAdapter` that hooks into JPF VM events (method entry/exit, instruction execution, choice generation). Manages path conditions and produces method summaries. Alternative listeners: `SymbolicListener2`, `HeuristicListener`, `GreenListener`.
+2. **`SymbolicListener`** (`jpf-symbc-main/src/main/java/gov/nasa/jpf/symbc/SymbolicListener.java`) — Event listener extending `PropertyListenerAdapter` that hooks into JPF VM events (method entry/exit, instruction execution, choice generation). Manages path conditions and produces method summaries. Alternative listeners: `SymbolicListener2`, `HeuristicListener`, `GreenListener`.
 
 ### Core Packages (all under `gov.nasa.jpf.symbc`)
 
@@ -83,17 +105,17 @@ JPF-SymBC plugs into JPF core via two main mechanisms:
 
 ### Constraint Solver Backends
 
-The system supports pluggable solvers configured via `.jpf` files. Solver JARs live in `lib/`:
-- **Z3** (com.microsoft.z3.jar) — primary SMT solver, with native libs in `lib/64bit/`
-- **Choco** — constraint programming
-- **Coral** — constraint optimization
-- **CVC3**, **STP**, **Yices** — additional SMT solvers
-- **Green** (green.jar) — unified constraint solver framework
-- **HAMPI**, **automaton.jar** — string constraint solving
+The system supports pluggable solvers configured via `.jpf` files. 20 solver JARs are in `repo/` (local Maven repository), 8 are resolved from Maven Central. Native libraries (.so, .dll, .dylib) are in `lib/` and `lib/64bit/`.
+- **Z3** — primary SMT solver (supported on Java 11)
+- **Choco** — constraint programming (supported on Java 11)
+- **Coral** — constraint optimization (partial Java 11 support — opt4j 2.4 ASM incompatibility)
+- **CVC3**, **STP**, **Yices** — additional SMT solvers (require 64-bit native libraries)
+- **Green** — unified constraint solver framework
+- **HAMPI** — string constraint solving
 
 ### Running Examples
 
-Examples are `.jpf` configuration files in `src/examples/` that specify the target class, symbolic method signatures, solver choice, and listeners. They are run through JPF with the SPF extension loaded.
+Examples are `.jpf` configuration files in `jpf-symbc-examples/src/main/resources/` that specify the target class, symbolic method signatures, solver choice, and listeners. They are run through JPF with the SPF extension loaded.
 
 ### Configuration via .jpf Files
 
@@ -159,7 +181,7 @@ Changes follow a structured artifact workflow. Track selection depends on whethe
 - All 4 artifacts complete (proposal, specs, design, tasks)
 - 8 task groups with 50+ subtasks (Phase 0: risk validation → Phase 4: cleanup)
 - Cross-LLM review incorporated (Codex, Gemini, Minimax, Qwen)
-- **Next step**: `/opsx:apply` to begin implementation
+- **Status**: Groups 0-7 complete, Group 8 (Final Verification) in progress
 
 Supporting docs:
 - `docs/PRD.md` — 13 FRs + 7 NFRs for the migration
@@ -168,7 +190,7 @@ Supporting docs:
 ### Key Skills
 
 **During `/opsx:apply`** — use component skills directly (not orchestrators):
-- `/sdd-test-run` — Run test suite (`ant test`)
+- `/sdd-test-run` — Run test suite (`mvn test`)
 - `/sdd-verify` — Full verification (tests + lint + complexity)
 - `/sdd-qa-lint-fix` — Auto-fix lint issues
 - `/sdd-test-add [file]` — Generate tests for a code unit

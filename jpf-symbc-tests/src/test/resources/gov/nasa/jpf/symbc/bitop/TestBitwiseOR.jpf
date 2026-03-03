@@ -1,0 +1,9 @@
+target=gov.nasa.jpf.symbc.bitop.TestBitwiseOR
+
+classpath=${jpf-symbc}/jpf-symbc-tests/target/test-classes
+
+sourcepath=${jpf-symbc}/jpf-symbc-tests/src/test/java
+
+symbolic.method= gov.nasa.jpf.symbc.bitop.TestBitwiseOR.test(sym#sym)
+
+symbolic.dp = cvc3bitvec

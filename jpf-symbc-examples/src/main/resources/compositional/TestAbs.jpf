@@ -1,0 +1,14 @@
+target=compositional.TestAbs
+
+classpath=${jpf-symbc}/jpf-symbc-examples/target/classes
+
+sourcepath=${jpf-symbc}/jpf-symbc-examples/src/main/java
+
+
+symbolic.method= TestAbs.testAbs(sym)
+
+#symbolic.dp=yices
+
+listener = .symbc.SymbolicListener
+
+vm.storage.class=nil

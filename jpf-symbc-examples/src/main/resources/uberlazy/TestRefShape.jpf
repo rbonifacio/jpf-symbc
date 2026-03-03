@@ -1,0 +1,12 @@
+target = uberlazy.TestRefShape
+
+classpath = ${jpf-symbc}/jpf-symbc-examples/target/classes
+
+sourcepath = ${jpf-symbc}/jpf-symbc-examples/src/main/java 
+
+#using this instruction factory ensures you use the uberlazy algorithm
+vm.insn_factory.class=gov.nasa.jpf.symbc.uberlazy.UberLazyInstructionFactory
+
+type_classpath = ${jpf-symbc}/jpf-symbc-examples/target/classes/uberlazy
+
+symbolic.method = uberlazy.TestRefShape.run(), uberlazy.TestRefShape.swapNode()

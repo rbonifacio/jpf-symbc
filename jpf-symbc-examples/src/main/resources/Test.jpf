@@ -1,0 +1,9 @@
+target=Test
+classpath=${jpf-symbc}/jpf-symbc-examples/target/classes
+sourcepath=${jpf-symbc}/jpf-symbc-examples/src/main/java
+symbolic.method = Test.test(sym#sym)
+symbolic.min_int=-100
+symbolic.max_int=100
+symbolic.dp=choco
+#vm.storage.class=nil
+listener = .symbc.SymbolicListener

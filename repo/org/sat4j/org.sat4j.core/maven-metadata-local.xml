@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>org.sat4j</groupId>
+  <artifactId>org.sat4j.core</artifactId>
+  <versioning>
+    <release>CUSTOM-20100705</release>
+    <versions>
+      <version>CUSTOM-20100705</version>
+    </versions>
+    <lastUpdated>20260303000000</lastUpdated>
+  </versioning>
+</metadata>

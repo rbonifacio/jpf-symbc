@@ -1,0 +1,13 @@
+target=corpus.UserPwd
+
+classpath=${jpf-symbc}/jpf-symbc-examples/target/classes
+
+sourcepath=${jpf-symbc}/jpf-symbc-examples/src/main/java
+
+#symbolic.method=
+
+symbolic.dp=choco
+
+listener = .symbc.SymbolicListener
+
+vm.storage.class=nil

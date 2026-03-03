@@ -1,0 +1,7 @@
+target=NumberExample
+
+symbolic.method=NumberExample.run(sym)
+
+classpath=${jpf-symbc}/jpf-symbc-examples/target/classes
+
+symbolic.debug=true

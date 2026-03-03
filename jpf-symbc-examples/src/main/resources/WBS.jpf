@@ -1,0 +1,9 @@
+target=WBS
+classpath=${jpf-symbc}/jpf-symbc-examples/target/classes
+sourcepath=${jpf-symbc}/jpf-symbc-examples/src/main/java
+symbolic.method = WBS.launch(sym#sym#sym#sym#sym#sym#sym#sym#sym)
+symbolic.minint=-100
+symbolic.maxint=100
+vm.storage.class=nil
+listener = .symbc.SymbolicListener
+#listener = .listener.ChoiceTracker

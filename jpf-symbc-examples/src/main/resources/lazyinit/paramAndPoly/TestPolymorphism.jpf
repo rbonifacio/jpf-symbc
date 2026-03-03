@@ -1,0 +1,15 @@
+target = lazyinit.paramAndPoly.TestPolymorphism
+
+classpath = ${jpf-symbc}/jpf-symbc-examples/target/classes
+
+sourcepath = ${jpf-symbc}/jpf-symbc-examples/src/main/java 
+
+symbolic.lazy = true 
+
+type_classpath = ${jpf-symbc}/jpf-symbc-examples/target/classes/lazyinit/paramAndPoly
+symbolic.lazy.subtypes = true
+
+#using this instruction factory ensures you use the uberlazy algorithm
+#vm.insn_factory.class=gov.nasa.jpf.symbc.uberlazy.UberLazyInstructionFactory
+
+symbolic.method = lazyinit.paramAndPoly.TestPolymorphism.swapAndCheckNode(sym)

@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>gov.nasa</groupId>
+        <artifactId>jpf-symbc-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>jpf-symbc-tests</artifactId>
+    <name>JPF-SymBC Tests</name>
+    <description>Regression test suite for JPF-SymBC</description>
+
+    <dependencies>
+        <!-- Internal modules -->
+        <dependency>
+            <groupId>gov.nasa</groupId>
+            <artifactId>jpf-symbc-main</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>gov.nasa</groupId>
+            <artifactId>jpf-symbc-classes</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>gov.nasa</groupId>
+            <artifactId>jpf-symbc-annotations</artifactId>
+        </dependency>
+
+        <!-- jpf-core -->
+        <dependency>
+            <groupId>gov.nasa</groupId>
+            <artifactId>jpf-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>gov.nasa</groupId>
+            <artifactId>jpf-classes</artifactId>
+        </dependency>
+
+        <!-- JUnit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- ============================================== -->
+        <!-- All solver JARs (NOT optional - needed at      -->
+        <!-- test runtime for solver integration tests)     -->
+        <!-- ============================================== -->
+
+        <!-- Maven Central -->
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-math</groupId>
+            <artifactId>commons-math</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.bcel</groupId>
+            <artifactId>bcel</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>dk.brics.automaton</groupId>
+            <artifactId>automaton</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jaxen</groupId>
+            <artifactId>jaxen</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.martiansoftware</groupId>
+            <artifactId>jsap</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.aima-java</groupId>
+            <artifactId>aima-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+        </dependency>
+
+        <!-- Local repo solver JARs -->
+        <dependency>
+            <groupId>com.ufpe</groupId>
+            <artifactId>coral</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>za.ac.sun</groupId>
+            <artifactId>green</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>edu.stanford</groupId>
+            <artifactId>hampi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.iastate</groupId>
+            <artifactId>iasolver</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>edu.nyu</groupId>
+            <artifactId>libcvc3</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>edu.nyu</groupId>
+            <artifactId>libcvc3</artifactId>
+            <version>5.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft</groupId>
+            <artifactId>z3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>choco</groupId>
+            <artifactId>choco</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>choco</groupId>
+            <artifactId>choco-solver</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opt4j</groupId>
+            <artifactId>opt4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>att.research</groupId>
+            <artifactId>grappa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.sat4j</groupId>
+            <artifactId>org.sat4j.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.sat4j</groupId>
+            <artifactId>org.sat4j.pb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucsb</groupId>
+            <artifactId>scale</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucsb</groupId>
+            <artifactId>solver</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucsb</groupId>
+            <artifactId>string</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucsb</groupId>
+            <artifactId>proteus</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucsb</groupId>
+            <artifactId>statemachines</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.stp</groupId>
+            <artifactId>stpjni</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>edu.sri</groupId>
+            <artifactId>yicesapijava</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <forkCount>1</forkCount>
+                    <reuseForks>false</reuseForks>
+                    <argLine>-Xmx1024m --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-exports java.base/jdk.internal.misc=ALL-UNNAMED</argLine>
+                    <includes>
+                        <include>**/Test*.java</include>
+                    </includes>
+                    <excludes>
+                        <!-- Native peer classes (not tests) -->
+                        <exclude>**/JPF_*.java</exclude>
+                        <!-- Excluded tests matching Ant build.xml exclusions -->
+                        <exclude>**/TestBitwise*.java</exclude>
+                        <exclude>**/TestCoverage.java</exclude>
+                        <exclude>**/TestDIV.java</exclude>
+                        <exclude>**/TestExJPF.java</exclude>
+                        <exclude>**/TestLazy*.java</exclude>
+                        <exclude>**/TestPathCondition.java</exclude>
+                        <exclude>**/TestStringBuilder.java</exclude>
+                        <exclude>**/strings/**</exclude>
+                        <exclude>**/TestSymbolicListener.java</exclude>
+                        <exclude>**/TestSymbolicOutput.java</exclude>
+                        <exclude>**/TestSymbolicJPF.java</exclude>
+                        <!-- Inner test classes (build.xml:265) -->
+                        <exclude>**/Test*$*.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

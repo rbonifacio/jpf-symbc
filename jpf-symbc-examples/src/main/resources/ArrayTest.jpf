@@ -1,0 +1,9 @@
+target=ArrayTest
+classpath=${jpf-symbc}/jpf-symbc-examples/target/classes
+sourcepath=${jpf-symbc}/jpf-symbc-examples/src/main/java
+symbolic.min_int=0
+symbolic.max_int=2
+#symbolic.method = ArrayTest.foo(con)
+symbolic.collect_constraints=true
+symbolic.db=no_solver
+symbolic.optimizechoices=false

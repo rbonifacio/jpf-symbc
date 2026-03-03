@@ -1,0 +1,9 @@
+target=CollectConstraints
+classpath=${jpf-symbc}/jpf-symbc-examples/target/classes
+sourcepath=${jpf-symbc}/jpf-symbc-examples/src/main/java
+symbolic.min_int=-100
+symbolic.max_int=100
+#symbolic.method = CollectConstraints.test(sym#sym)
+symbolic.collect_constraints=true
+symbolic.db=no_solver
+symbolic.optimizechoices=false

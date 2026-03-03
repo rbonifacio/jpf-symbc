@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>gov.nasa</groupId>
+        <artifactId>jpf-symbc-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>jpf-symbc-classes</artifactId>
+    <name>JPF-SymBC Classes</name>
+    <description>Model classes executed inside JPF (e.g., java.lang.* stubs)</description>
+
+    <!--
+        INV-BLD-05: jpf-symbc-classes does NOT depend on jpf-symbc-main.
+        Three compiler executions:
+        1. default-compile: regular model classes in src/main/java/ (gov.*, org.*)
+        2. compile-patch-java-base: java.lang.Math, java.util.Scanner via - -patch-module java.base
+        3. compile-patch-java-desktop: java.awt.image.* via - -patch-module java.desktop
+    -->
+
+    <dependencies>
+        <!-- Internal module -->
+        <dependency>
+            <groupId>gov.nasa</groupId>
+            <artifactId>jpf-symbc-annotations</artifactId>
+        </dependency>
+
+        <!-- jpf-core -->
+        <dependency>
+            <groupId>gov.nasa</groupId>
+            <artifactId>jpf-core</artifactId>
+        </dependency>
+
+        <!-- jpf-classes (model class compilation support from jpf-core) -->
+        <dependency>
+            <groupId>gov.nasa</groupId>
+            <artifactId>jpf-classes</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <executions>
+                    <!-- Execution 1: default-compile for regular model classes (gov.*, org.*) -->
+                    <execution>
+                        <id>default-compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <source>${java.version}</source>
+                            <target>${java.version}</target>
+                        </configuration>
+                    </execution>
+
+                    <!-- Execution 2: compile java.base patch classes (Math, Scanner) -->
+                    <execution>
+                        <id>compile-patch-java-base</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <compileSourceRoots>
+                                <compileSourceRoot>${project.basedir}/src/main/modules/java.base</compileSourceRoot>
+                            </compileSourceRoots>
+                            <compilerArgs>
+                                <arg>--patch-module</arg>
+                                <arg>java.base=${project.basedir}/src/main/modules/java.base</arg>
+                                <arg>--add-reads</arg>
+                                <arg>java.base=ALL-UNNAMED</arg>
+                            </compilerArgs>
+                        </configuration>
+                    </execution>
+
+                    <!-- Execution 3: compile java.desktop patch classes (BufferedImage, Kernel) -->
+                    <execution>
+                        <id>compile-patch-java-desktop</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <compileSourceRoots>
+                                <compileSourceRoot>${project.basedir}/src/main/modules/java.desktop</compileSourceRoot>
+                            </compileSourceRoots>
+                            <compilerArgs>
+                                <arg>--patch-module</arg>
+                                <arg>java.desktop=${project.basedir}/src/main/modules/java.desktop</arg>
+                            </compilerArgs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

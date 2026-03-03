@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>gov.nasa</groupId>
+    <artifactId>jpf-symbc-parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>JPF-SymBC Parent</name>
+    <description>Symbolic Java PathFinder - Parent POM</description>
+
+    <modules>
+        <module>jpf-symbc-annotations</module>
+        <module>jpf-symbc-main</module>
+        <module>jpf-symbc-classes</module>
+        <module>jpf-symbc-tests</module>
+        <module>jpf-symbc-examples</module>
+    </modules>
+
+    <properties>
+        <java.version>11</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- jpf-core coordinates -->
+        <jpf-core.version>DEVELOPMENT-SNAPSHOT</jpf-core.version>
+
+        <!-- Maven Central dependency versions -->
+        <commons-lang.version>2.4</commons-lang.version>
+        <commons-math.version>1.2</commons-math.version>
+        <bcel.version>6.0</bcel.version>
+        <automaton.version>1.11-8</automaton.version>
+        <jaxen.version>1.2.0</jaxen.version>
+        <jsap.version>2.1</jsap.version>
+        <aima-core.version>0.10.5</aima-core.version>
+        <jedis.version>2.0.0</jedis.version>
+
+        <!-- Local repo dependency versions -->
+        <coral.version>0.7</coral.version>
+        <green.version>1.0</green.version>
+        <hampi.version>1.0</hampi.version>
+        <iasolver.version>1.0</iasolver.version>
+        <libcvc3.version>5.0.0</libcvc3.version>
+        <z3.version>4.8.14</z3.version>
+        <choco-legacy.version>1.2.04</choco-legacy.version>
+        <choco-solver.version>2.1.1</choco-solver.version>
+        <opt4j.version>2.4</opt4j.version>
+        <grappa.version>1.0</grappa.version>
+        <sat4j.version>CUSTOM-20100705</sat4j.version>
+        <scale.version>1.0</scale.version>
+        <solver.version>1.0</solver.version>
+        <string.version>1.0</string.version>
+        <proteus.version>1.0</proteus.version>
+        <statemachines.version>1.0</statemachines.version>
+        <stpjni.version>1.0</stpjni.version>
+        <yicesapijava.version>1.0</yicesapijava.version>
+
+        <!-- Test -->
+        <junit.version>4.13.1</junit.version>
+
+        <!-- Plugin versions -->
+        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.2.2</maven-surefire-plugin.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>local-repo</id>
+            <url>file://${maven.multiModuleProjectDirectory}/repo</url>
+        </repository>
+    </repositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- ==================== -->
+            <!-- jpf-core artifacts   -->
+            <!-- ==================== -->
+            <dependency>
+                <groupId>gov.nasa</groupId>
+                <artifactId>jpf-core</artifactId>
+                <version>${jpf-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>gov.nasa</groupId>
+                <artifactId>jpf-classes</artifactId>
+                <version>${jpf-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>gov.nasa</groupId>
+                <artifactId>jpf-annotations</artifactId>
+                <version>${jpf-core.version}</version>
+            </dependency>
+
+            <!-- ==================== -->
+            <!-- Internal modules     -->
+            <!-- ==================== -->
+            <dependency>
+                <groupId>gov.nasa</groupId>
+                <artifactId>jpf-symbc-annotations</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>gov.nasa</groupId>
+                <artifactId>jpf-symbc-main</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>gov.nasa</groupId>
+                <artifactId>jpf-symbc-classes</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- ======================== -->
+            <!-- Maven Central (8 JARs)   -->
+            <!-- ======================== -->
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>${commons-lang.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-math</groupId>
+                <artifactId>commons-math</artifactId>
+                <version>${commons-math.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.bcel</groupId>
+                <artifactId>bcel</artifactId>
+                <version>${bcel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dk.brics.automaton</groupId>
+                <artifactId>automaton</artifactId>
+                <version>${automaton.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jaxen</groupId>
+                <artifactId>jaxen</artifactId>
+                <version>${jaxen.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.martiansoftware</groupId>
+                <artifactId>jsap</artifactId>
+                <version>${jsap.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.googlecode.aima-java</groupId>
+                <artifactId>aima-core</artifactId>
+                <version>${aima-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>${jedis.version}</version>
+            </dependency>
+
+            <!-- ========================== -->
+            <!-- Local repo JARs (20 JARs)  -->
+            <!-- ========================== -->
+            <dependency>
+                <groupId>com.ufpe</groupId>
+                <artifactId>coral</artifactId>
+                <version>${coral.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>za.ac.sun</groupId>
+                <artifactId>green</artifactId>
+                <version>${green.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>edu.stanford</groupId>
+                <artifactId>hampi</artifactId>
+                <version>${hampi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.iastate</groupId>
+                <artifactId>iasolver</artifactId>
+                <version>${iasolver.version}</version>
+            </dependency>
+            <!-- libcvc3: two versions. 5.0.0 is managed here; 2.3.0 must be specified explicitly -->
+            <dependency>
+                <groupId>edu.nyu</groupId>
+                <artifactId>libcvc3</artifactId>
+                <version>${libcvc3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.microsoft</groupId>
+                <artifactId>z3</artifactId>
+                <version>${z3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>choco</groupId>
+                <artifactId>choco</artifactId>
+                <version>${choco-legacy.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>choco</groupId>
+                <artifactId>choco-solver</artifactId>
+                <version>${choco-solver.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opt4j</groupId>
+                <artifactId>opt4j</artifactId>
+                <version>${opt4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>att.research</groupId>
+                <artifactId>grappa</artifactId>
+                <version>${grappa.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.sat4j</groupId>
+                <artifactId>org.sat4j.core</artifactId>
+                <version>${sat4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.sat4j</groupId>
+                <artifactId>org.sat4j.pb</artifactId>
+                <version>${sat4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>edu.ucsb</groupId>
+                <artifactId>scale</artifactId>
+                <version>${scale.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>edu.ucsb</groupId>
+                <artifactId>solver</artifactId>
+                <version>${solver.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>edu.ucsb</groupId>
+                <artifactId>string</artifactId>
+                <version>${string.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>edu.ucsb</groupId>
+                <artifactId>proteus</artifactId>
+                <version>${proteus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>edu.ucsb</groupId>
+                <artifactId>statemachines</artifactId>
+                <version>${statemachines.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.stp</groupId>
+                <artifactId>stpjni</artifactId>
+                <version>${stpjni.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>edu.sri</groupId>
+                <artifactId>yicesapijava</artifactId>
+                <version>${yicesapijava.version}</version>
+            </dependency>
+
+            <!-- ========================== -->
+            <!-- Test                       -->
+            <!-- ========================== -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                        <showDeprecation>true</showDeprecation>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>
