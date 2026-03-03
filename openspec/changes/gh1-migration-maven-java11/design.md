@@ -5,7 +5,7 @@ JPF-SymBC uses Apache Ant with 6 source roots, 28 bundled JARs, and Java 8. The 
 The migration is phased (PRD Section 6): Phase 0 validates blockers, Phase 1 creates Maven structure (still Java 8), Phase 2 upgrades to Java 11, Phase 3 fixes jpf-core compatibility, Phase 4 cleans up. This design covers all four phases.
 
 Key constraints:
-- Third-party repository — local-only changes, no remote push
+- Fork repository with write access (github.com/phtcosta/jpf-symbc). Changes are committed in feature branches and merged via PR.
 - 154 `.jpf` configuration files must have paths updated (34 tests, 118 examples, 1 in src/main, 1 in doc/)
 - 4 model classes (`java.*`) require `--patch-module` compilation on Java 11
 - Native libraries in `lib/64bit/` must remain loadable
@@ -143,7 +143,7 @@ jpf-symbc-examples     → main + classes + annotations
 | NFR01: All solvers functional | All solver JARs on classpath | Solver-specific test passes |
 | NFR02: Native libs loadable | `lib/64bit/` preserved, `java.library.path` configured | `System.loadLibrary()` succeeds |
 | NFR03: .jpf semantics preserved | Only path properties change | .jpf files load correctly in JPF |
-| NFR04: Same classes in JARs | Source file mapping verified | JAR content comparison |
+| NFR04: Functional equivalence of JARs | Source file mapping verified; union of `jpf-symbc-classes` + `jpf-symbc-annotations` JARs ≡ old `jpf-symbc-classes.jar` (INV-BLD-03) | JAR content comparison (class list union) |
 | NFR05: Tests still pass | Surefire execution | `mvn test` green |
 | INV-BLD-05: classes ≠ depend on main | `jpf-symbc-classes/pom.xml` has no dep on main | Compile without main on classpath |
 | INV-DEP-06: classes deps | `jpf-symbc-classes` depends on jpf-core + annotations only | POM verification |
@@ -274,8 +274,10 @@ jpf.properties
   → jpf-symbc.native_classpath:
       jpf-symbc-main/target/jpf-symbc-main-1.0.0-SNAPSHOT.jar
       jpf-symbc-annotations/target/jpf-symbc-annotations-1.0.0-SNAPSHOT.jar
-      repo/**/*.jar (all solver JARs — moved from lib/)
-      NOTE: After migration, solver JARs live ONLY in repo/ (not lib/).
+      repo/<groupId-path>/<artifactId>/<version>/<jar> (each of 20 solver JARs listed explicitly)
+      NOTE: JPF properties do NOT support ** wildcards. Each JAR must be listed individually
+            with its full repo/ path (e.g., ${jpf-symbc}/repo/com/microsoft/z3/4.8.14/z3-4.8.14.jar).
+            After migration, solver JARs live ONLY in repo/ (not lib/).
             lib/ retains ONLY native libraries (.so/.dll/.dylib).
   → jpf-symbc.classpath:
       jpf-symbc-classes/target/jpf-symbc-classes-1.0.0-SNAPSHOT.jar
@@ -312,7 +314,13 @@ jpf.properties
 
 ## Rollback Plan
 
-The migration is protected by a pre-migration git tag (`pre-migration-java11`). Rollback criteria per phase:
+The migration is protected by git tags at each phase boundary for granular rollback:
+- `pre-migration-java11` — before any changes (task 0.1)
+- `migration-phase1-maven-structure-complete` — after Maven structure + file moves (after Group 4)
+- `migration-phase2-java11-complete` — after Java 11 compiles + runtime test (after Group 5)
+- `migration-phase3-testing-complete` — after tests pass + solver smoke tests (after Group 6)
+
+Rollback criteria per phase:
 
 | Phase | Rollback Trigger | Action |
 |-------|-----------------|--------|

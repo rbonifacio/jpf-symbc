@@ -17,8 +17,11 @@
      - Group 8 (Verification) is final — must run after all other groups.
        Includes SHA-256 comparison, INV-BLD-03 breaking change verification, final solver smoke tests.
 
-     Critical path: 0 → 2 → 3 → 4 → 5 → 6 → 7 → 8
+     Critical path: 0 → [1 + 2] → 3 → 4 → 5 → 6 → 7 → 8
      Parallel opportunity: Groups 1 and 2 can run in parallel after Group 0.
+     IMPORTANT: Group 1 (repo/ setup) MUST complete before Task 5.1 (mvn compile Java 8),
+     because POMs reference repo/ JARs. Groups 1 and 2 are independent of each other,
+     but both must finish before Group 5.
      Parallel opportunity: Within Group 3, annotations/main/classes file moves are independent.
      Parallel opportunity: Within Group 4, test .jpf and example .jpf updates are independent.
      Parallel opportunity: Within Group 0, tasks 0.6/0.7/0.8/0.9 are independent of each other.
@@ -112,13 +115,19 @@
   ```
   If API incompatible, document Coral as unsupported on Java 11 (BLOCKER: opt4j 2.4 bundles Guice 1.0 with ASM 1.5.3/CGLIB 2.1_3 that cannot parse Java 11 class files).
 - [ ] 0.5b **opt4j API audit via coral.jar**: since jpf-symbc has no direct opt4j imports, the audit must focus on `coral.jar` internals: (a) `jar tf lib/coral.jar | grep opt4j` to list opt4j-dependent classes, (b) extract and inspect those classes for opt4j API usage, (c) compare with opt4j 3.3 API, (d) estimate adaptation effort. **Decision**: if effort > 2 days or coral.jar needs rebuilding from unavailable source, document Coral as unsupported on Java 11.
-- [ ] 0.6 **SHA-256 JAR baseline**:
+- [ ] 0.6 **SHA-256 JAR baseline + native library inventory**:
   ```bash
   mkdir -p docs
+  # JAR baseline (28 JARs)
   sha256sum lib/*.jar > docs/jar-checksums-pre-migration.txt
   wc -l docs/jar-checksums-pre-migration.txt   # expect 28 lines
+
+  # Native library inventory (.so/.dll/.dylib in lib/ root + lib/64bit/)
+  find lib -type f \( -name '*.so' -o -name '*.dll' -o -name '*.dylib' -o -name '*.so.*' -o -name '*.jnilib' \) \
+    | sort > docs/native-libs-pre-migration.txt
+  wc -l docs/native-libs-pre-migration.txt   # expect 34+ files
   ```
-  Captures exact state of all JARs before any are replaced. When Maven Central dependencies are added in Phase 1, compare downloaded JARs against this baseline.
+  Captures exact state of all JARs and native libs before any changes. JAR baseline is used for Maven Central verification in Phase 1. Native lib inventory is used for preservation verification in task 8.6.
 - [ ] 0.7 **SAT4J custom vs Maven Central verification**:
   ```bash
   # Extract MANIFEST from local custom JARs
@@ -191,9 +200,23 @@
 - [ ] 4.1 Update test .jpf files: `build/tests` → `jpf-symbc-tests/target/test-classes`, `src/tests` → `jpf-symbc-tests/src/test/java`
 - [ ] 4.2 Update example .jpf files: `build/examples` → `jpf-symbc-examples/target/classes`, `src/examples` → `jpf-symbc-examples/src/main/java`
 - [ ] 4.3 Update the 2 extra .jpf files (TestMain.jpf, Example.jpf) — manual path update based on their placement from task 3.12
-- [ ] 4.4 Post-verification: `grep -rl 'build/tests\|build/examples'` in ALL .jpf locations — MUST return empty
+- [ ] 4.4 Post-verification — old output paths removed:
+  ```bash
+  # MUST return empty — no .jpf should reference old build/ output dirs
+  grep -rl 'build/tests\|build/examples' jpf-symbc-tests/ jpf-symbc-examples/ jpf-symbc-main/
+  ```
+- [ ] 4.4b Post-verification — old source paths removed:
+  ```bash
+  # MUST return empty — no .jpf should reference old src/tests or src/examples source dirs
+  grep -rl '[=/]src/tests\|[=/]src/examples' jpf-symbc-tests/ jpf-symbc-examples/ jpf-symbc-main/
+  ```
 - [ ] 4.5 Post-verification: `grep -rL 'target/'` in .jpf resource dirs — MUST return empty (all files updated)
 - [ ] 4.6 Identify and manually fix .jpf files with non-standard paths: `grep -rl 'native_classpath=.*home\|native_classpath=.*git'`
+
+**Checkpoint**: After Groups 1-4 are complete and verified:
+```bash
+git tag migration-phase1-maven-structure-complete
+```
 
 ## 5. Phase 1 Validation + Java 11 Migration (FR01, FR03, FR04)
 
@@ -224,15 +247,24 @@
 - [ ] 5.7 **Module system + ClassLoader runtime test**:
   ```bash
   sdk use java 11.0.12-open
-  # Execute a simple .jpf via JPF to verify ClassLoader works under module system
+  # Build the full classpath — JPF runs via RunJPF, NOT via -jar
+  # (the -jar flag ignores -cp and requires Main-Class in MANIFEST.MF, which jpf-symbc doesn't have)
+  MVN_CP=$(mvn -q dependency:build-classpath -pl jpf-symbc-main -Dmdep.outputFile=/dev/stdout)
   java -Djava.library.path=lib:lib/64bit \
     --add-opens java.base/java.lang=ALL-UNNAMED \
     --add-opens java.base/java.util=ALL-UNNAMED \
     --add-exports java.base/jdk.internal.misc=ALL-UNNAMED \
-    -jar jpf-symbc-main/target/jpf-symbc-main-1.0.0-SNAPSHOT.jar \
-    src/examples/demo/NumericExample.jpf
+    -cp "jpf-symbc-main/target/classes:jpf-symbc-classes/target/classes:jpf-symbc-annotations/target/classes:${MVN_CP}" \
+    gov.nasa.jpf.tool.RunJPF \
+    jpf-symbc-examples/src/main/resources/demo/NumericExample.jpf
   ```
   Check for `IllegalAccessError`, `InaccessibleObjectException`, or `ClassFormatError`. If failures occur, expand `--add-opens`/`--add-exports` flags empirically. **This is critical** — compile-time success does NOT guarantee runtime success with custom ClassLoaders.
+  **SUCCESS here means**: native libs and JPF ClassLoader are compatible with JDK 11 runtime + module system. It does NOT mean Maven compilation with Java 11 source level works (that's validated by 5.6).
+
+**Checkpoint**: After Group 5 is complete (Java 11 compiles + runtime test passes):
+```bash
+git tag migration-phase2-java11-complete
+```
 
 ## 6. jpf-core Compatibility + Testing (FR08, FR09, FR10, FR11)
 
@@ -256,14 +288,20 @@
   - **Yices** (`symbolic.dp=yices`): BEST EFFORT — pass OR document as unsupported
   Each test: execute a `.jpf` example with the solver configured and verify it returns a correct solution without errors.
 
+**Checkpoint**: After Group 6 is complete (tests pass + solver smoke tests):
+```bash
+git tag migration-phase3-testing-complete
+```
+
 ## 7. Cleanup and Documentation (FR12, FR13)
 
 - [ ] 7.1 Archive and remove obsolete build artifacts: **archive** `build.xml` → `docs/build-archive/build.xml` (preserves build knowledge/decisions as comments in the file), then **delete** `.classpath`, `.project`, `nbproject/`, `.externalToolBuilders/`
 - [ ] 7.2 Remove original `src/` directory (after confirming all files are in Maven modules)
 - [ ] 7.3 Remove solver JARs from `lib/` that are now in `repo/` or Maven Central — **PRESERVE all native library files (.so, .dll, .dylib) in BOTH `lib/` root AND `lib/64bit/`**. Only delete `.jar` files from `lib/` root. There are 34+ native library files in `lib/` root (CVC3, Z3, STP, Yices for Linux/Windows/macOS) that MUST be kept.
-- [ ] 7.4 Clean up `NativeLibSmokeTest.java` (temporary file from Phase 0)
-- [ ] 7.5 Update `README.md` — new prerequisites (Java 11, Maven, jpf-core local build), new build commands (`mvn compile`, `mvn test`, `mvn package`), note about opt4j upgrade if applicable
-- [ ] 7.6 Update `CLAUDE.md` — build commands, source layout, setup requirements
+- [ ] 7.4 Update `.gitignore` for Maven artifacts: add `target/` (covers all 5 modules), ensure `repo/` is NOT gitignored (it contains the 20 local JARs that must be version-controlled)
+- [ ] 7.5 Clean up `NativeLibSmokeTest.java` (temporary file from Phase 0)
+- [ ] 7.6 Update `README.md` — new prerequisites (Java 11, Maven, jpf-core local build), new build commands (`mvn compile`, `mvn test`, `mvn package`), note about opt4j upgrade if applicable
+- [ ] 7.7 Update `CLAUDE.md` — build commands, source layout, setup requirements
 
 ## 8. Final Verification
 
@@ -278,7 +316,7 @@
   sdk use java 11.0.12-open
   mvn test
   ```
-  **Acceptance**: same pass/fail/skip counts as Ant `ant test` (within tolerance for newly-working tests).
+  **Acceptance**: pass rate MUST be within ≤1% of Ant `ant test` baseline. Any newly failing tests MUST be individually documented with root cause (API change, classpath issue, etc.). Newly passing tests (previously failing due to environment) are acceptable.
 - [ ] 8.3 Package:
   ```bash
   sdk use java 11.0.12-open
@@ -287,7 +325,7 @@
   5 JARs produced in `*/target/` directories.
 - [ ] 8.4 Verify .jpf path invariants: `grep -rl 'build/tests\|build/examples\|build/jpf-symbc' .` returns empty (INV-CFG-10)
 - [ ] 8.5 Verify JAR contents: compare class lists between old `build/*.jar` and new `*/target/*.jar` (NFR04). **NOTE (breaking change)**: `jpf-symbc-classes` JAR no longer includes annotation classes (they are in their own JAR per INV-BLD-03) — verify `jpf.properties` `native_classpath` includes BOTH `jpf-symbc-classes` AND `jpf-symbc-annotations` JARs.
-- [ ] 8.6 Verify native library preservation: `find lib/ -name '*.so' -o -name '*.dll' -o -name '*.dylib'` count MUST match pre-migration baseline from task 0.6
+- [ ] 8.6 Verify native library preservation: `find lib -type f \( -name '*.so' -o -name '*.dll' -o -name '*.dylib' -o -name '*.so.*' -o -name '*.jnilib' \) | sort` MUST match `docs/native-libs-pre-migration.txt` from task 0.6 exactly (same files, same count)
 - [ ] 8.7 Verify Maven Central dependencies resolve: `mvn dependency:resolve -pl jpf-symbc-main` — all 8 Central deps MUST download. Compare SHA-256 of downloaded JARs with baseline from task 0.6 for the 8 that were in `lib/`.
 - [ ] 8.8 Verify no solver JAR files remain in `lib/` — only native library files (.so/.dll/.dylib) should be in `lib/` after migration. Solver JARs are now exclusively in `repo/` or resolved from Maven Central.
 - [ ] 8.9 Run per-solver smoke tests one final time (Z3 and Choco mandatory, others best-effort) — see task 6.6.

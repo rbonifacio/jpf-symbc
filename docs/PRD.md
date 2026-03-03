@@ -70,7 +70,7 @@ The yannicnoller/jpf-core fork used by jpf-symbc has diverged from the official 
 | NFR01 | All 8+ solver backends MUST remain functional (Z3, Choco, Coral, CVC3, STP, Yices, Green, HAMPI) | MUST |
 | NFR02 | Native libraries (.so/.dll/.dylib) in `lib/` MUST remain loadable at runtime | MUST |
 | NFR03 | Existing `.jpf` configuration semantics MUST be preserved — only paths change | MUST |
-| NFR04 | The 3 output JARs MUST contain the same classes as the current build | MUST |
+| NFR04 | The output JARs MUST provide functional equivalence to the current 3 JARs — same classes are available at runtime. Annotations may ship in a dedicated JAR (INV-BLD-03 breaking change: `jpf-symbc-classes` no longer bundles annotations; both JARs must be on classpath). | MUST |
 | NFR05 | Tests that pass today MUST continue to pass after migration | MUST |
 | NFR06 | Build SHOULD work with `mvn compile` / `mvn test` / `mvn package` | SHOULD |
 | NFR07 | Migration SHOULD be phased: Maven structure first (Java 8), then Java 11 upgrade | SHOULD |

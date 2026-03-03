@@ -18,7 +18,7 @@ Build outputs change from `build/` subdirectories + 3 JARs to Maven's `target/` 
 - **INV-BLD-09**: Model classes in `java.lang` and `java.util` packages MUST compile with `--patch-module java.base` and `--add-reads java.base=ALL-UNNAMED`
 - **INV-BLD-10**: Model classes in `java.awt` packages MUST compile with `--patch-module java.desktop`
 - **INV-BLD-11**: The default-compile execution MUST run before patch-module executions so that `gov.nasa.jpf.symbc.Debug.class` is available for `java.util.Scanner`
-- **INV-BLD-12**: Maven reactor MUST resolve module compilation order from `<dependency>` declarations: annotations → main, classes → tests, examples
+- **INV-BLD-12**: Maven reactor MUST resolve module compilation order from `<dependency>` declarations: `jpf-symbc-annotations` (no deps) is compiled first, then `jpf-symbc-main` + `jpf-symbc-classes` (both depend on annotations), then `jpf-symbc-tests` + `jpf-symbc-examples` (depend on main + classes + annotations)
 
 ## REMOVED Invariants
 
