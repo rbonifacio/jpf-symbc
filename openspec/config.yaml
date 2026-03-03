@@ -31,8 +31,8 @@ rules:
     - "Specs document the CURRENT behavior of the system"
     - "Use RFC 2119 keywords (MUST, MUST NOT, SHALL, SHOULD, MAY) for requirements"
     - "Write scenarios in WHEN/THEN/AND format"
-    - "Invariant IDs use format INV-XX-NN where XX is domain abbreviation (BLD, DEP, CFG)"
+    - "Invariant IDs use format INV-XXX-NN where XXX is 2-3 char domain abbreviation (BLD, DEP, CFG, KG, DC, ARC, COD, PRJ)"
   tasks:
     - Include a final Verification group
     - Annotate skill invocations as checkbox items where they add value
-    - In sdd-full changes, use component skills directly (not orchestrators)
+    - "In sdd-full changes, use component skills directly — not T0/T1 orchestrators that have 'WHEN NOT: inside Full/FF SDD workflows' in their skill description (e.g., sdd-cleanup, sdd-feature, sdd-tdd, sdd-refactor). Composite analysis skills without this restriction (sdd-architect, sdd-verify, sdd-code-reviewer) are allowed."
